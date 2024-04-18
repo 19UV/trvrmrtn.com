@@ -1,0 +1,25 @@
+a:link, a:visited {
+	color: rgb(50, 125, 221);
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+body {
+	background-color: gray;
+}
+
+.wrapper {
+	max-width: 900px;
+	margin: auto;
+	border: 1px solid black;
+	box-shadow: 4px 4px 8px black;
+	padding: 3rem;
+	background-color: white;
+}
+
+.post-wrapper {
+	border: 1px solid black;
+	padding: 0.5rem;
+}
