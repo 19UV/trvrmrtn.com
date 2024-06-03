@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content="My little corner of the internet.">
+
+		<title>Trevor Martin - Hello-4D</title>
+
+		<!-- Make the browser not request a favicon (for now) -->
+		<link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
+		<link href="../css/common.css" rel="stylesheet" />
+	</head>
+	<body>
+		<div class="wrapper">
+			<h1 class="header">
+				# <a href="..">trvrmrtn</a> <span>Blog/Hello-4D</span>
+			</h1>
+
+			<p>Posted: June 2nd, 2024</p>
+
+			<p>A few years ago, I came across an indie game called <a href="https://miegakure.com/">Miegakure</a>.</p>
+
+			<p>
+				From what I was able to gather from the few promotional videos, it was a relatively simple concept: you
+				witness someone get their purse stolen and you must follow after the thief to retrieve it.
+			<p>
+
+			<p>The premise isn't interesting; the technology is.</p>
+
+			<p>Miegakure is a puzzle/platformer game that takes place in four spacial dimensions.</p>
+
+			<p>You, the player, are able to move around in four dimensions.</p>
+
+			<p>Unfortunately, the game still hasn't been released at time of writing, so this series of posts will seek to answer the question:</p>
+
+			<p><em>What if there were four dimensions?</em></p>
+
+			<h2>First Question: What do I mean by four dimensions?</h2>
+
+			<p>
+				Most of us are familar with Einstein's concept of spacetime and that the universe is a four dimensional
+				object of which time is the fourth dimension. We're not doing that here. For the sake of this series, we
+				will assume the fourth dimension to be a spacial dimension (a being pointed in the correct direction could
+				walk along it just like the three existing ones).
+			</p>
+
+			<p>
+				The existance of the fourth dimension is unintuitive, as we (three dimensional beings) are unable to
+				properly visualize it. For that reason, we will attempt to reason about it from the perspective of a two
+				dimensional researcher trying to figure out three dimensions. I do not take credit for this idea;
+				Edwin Abbott's <cite>Flatland</cite> presented it way back in 1884.
+			</p>
+
+			<h2>Second Question: How does one measure position?</h2>
+
+			<p>
+				In Geometry, all positions are described relative to a center point called origin. We then describe a set
+				of rulers each perpendicular to each other (at 90&deg; to all its peers). Because they are all perpendicular,
+				a point's position along one of the rulers is entirely independant from the others. We can then describe a
+				position in space by recording the distance along each of the rulers in an ordered sequence. If that doesn't
+				make sense, that's ok. I'll give you a few examples:
+			</p>
+
+			<p>
+				When using graph paper in school, if a teacher asked you to plot the points (1, 2) and (3, 4) you would first
+				define a central point (likely in the middle or bottom left of the page). That central point is the origin.
+				You would then count one square to the right and two squares up to plot the first point. Then, you would go back
+				to the origin and count three squares to the right and four squares up to plot the second point. In that case,
+				you defined origin and used the horizontal line and vertical line as your rulers. You counted along your two
+				'rulers' to place the point.
+			</p>
+
+			<p>
+				Three dimensions is similar, except you have left/right, up/down, and in/out. If you (like me) played Minecraft
+				as a kid, you probably have a good understanding of this. You diamonds are under <code>y = 15</code> and that
+				you can tell someone your position by relaying three numbers in the debug screen--the first number increases and
+				decreases when traveling one way, the last number increases and decreases when traveling perpendicular to that, and
+				the middle number increases when going up and decreases when going down. Those numbers are your distances along three
+				'rulers' placed at the center of the world (at 0,0,0), and they tell you the number of blocks along each ruler that
+				you are. There are diamonds starting at 15 ruler ticks from the bottom of the world (going downward).
+			</p>
+
+			<p>
+				Geometry can even be applied to one dimension. Zero is the 'origin' of the number line. There is a ruler pointed
+				in one direction, and a number is the distance along that ruler. If you go in the opposite direction of the ruler,
+				the 'position' is negative. 53 is 53 ruler ticks in the direction of the ruler. -5 is 5 ruler ticks in the opposite
+				direction of the ruler.
+			</p>
+
+			<p>
+				Now, let's apply this to four dimensions. We'll say our first ruler is pointed to the right. Our second ruler is
+				pointed upward (perpendicular to the first). Our third ruler is pointed away from us (perpendicular to the first two).
+				Our fourth ruler gets placed by a friend who is able to place it in such a way that it is perpendicular to the first
+				three rulers.
+			</p>
+
+			<p>
+				This probably doesn't make sense, but our three dimensional world also won't make sense to a square on a piece
+				of paper. Just stick with me.
+			</p>
+
+			<p>
+				Let's say our dog is in our room, and we want to describe its position to someone. We can do that by measuring the
+				distance along each ruler that we have precariously setup. Something on the floor may be 3 feet to the right, 0 feet
+				up, and -2 feet away (2 feet toward us), and 5 feet along the ruler that only our friend can see.
+			</p>
+
+			<p>Now we know where our dog is. But what if we want to know how far it is away from the cat?</p>
+
+			<h2>Third Question: How do we do math in four dimensions?</h2>
+
+			<p>
+				You and your friend find the position of the cat using the method above. You then find the position of the dog again
+				because there was apparently a strange noise outside. You write down their positions below.
+			</p>
+
+			<p><strong>Cat:</strong> 1 foot to the right, 2 feet up, 3 feet away, and 3 feet along your friend's ruler.</p>
+			<p><strong>Dog:</strong> 5 feet to the right, 0 feet up, -6 feet away, and 2 feet along your friend's ruler.</p>
+
+			<p>First, let's formalize this.</p>
+
+			<p>
+				Instead of writing out the lengths along each direction, we'll define something called a vector. There are
+				several ways of notating a vector. I prefer the way below.
+			</p>
+
+			<code>v = &lt;x, y, z, w&gt;</code>
+
+			<p>Where x, y, z, w are the lengths along the right, up, away, and your friend's rulers.</p>
+
+			<p>
+				Knowing this, let's write out the cat and dog positions using vectors (c is the position of the cat;
+				d is the position of the dog).
+			</p>
+
+			<code>
+				c = &lt;1, 2, 3, 3&gt;  </br>
+				d = &lt;5, 0, -6, 2&gt; </br>
+			</code>
+
+			<p>
+				You can think of a vector either as a point (such as the location of your pet) or an arrow starting
+				at origin and ending at the location. In the first case, the vector is a position. In the second case,
+				it's more of a direction or displacement.
+			</p>
+
+			<p>
+				<strong>Side Note:</strong> With the introduction of vectors, there are also scalars. Scalars are just normal
+				numbers like 5, 17, 42, etc. They're kinda like one dimensional vectors (and some operations like addition,
+				subtraction, dot product, and magnitude look suspiciously like normal addition, subtraction, multiplication,
+				and absolute value).
+			</p>
+
+			<p>Now, for the forseeable future, we will need to be aware of the following operations:</p>
+
+			<ul>
+				<li><a href="#vector-addition-subtraction">Addition and subtraction of vectors</a></li>
+				<li><a href="#vector-scaling">Vector scaling</a></li>
+				<li><a href="#vector-dot-product">Dot product</a></li>
+				<li><a href="#vector-magnitude">Calculating magnitude</a></li>
+			</ul>
+
+			<p>I'll be quick.</p>
+
+			<h2 id="vector-addition-subtraction">Vector Addition and Subtraction</h2>
+
+			<p>
+				Conceptually, you can think of vector addition as taking two arrows (the vectors) and placing the
+				beginning of one at the end of the other.
+			</p>
+
+			<p>
+				So a vector pointing 3 feet up plus a vector pointing 2 feet to the right will result in a vector
+				pointing 3 feet up and 2 feet to the right.
+			</p>
+
+			<code><pre>
+^           ^-->     ^
+|   +     = |    =  /
+|     -->   |      /
+			</pre></code>
+
+			<p>As you would expect, you get the resulting vector by adding each component together. So:</p>
+
+			<code>
+				A = &lt;a, b, c, d&gt;                     </br>
+				B = &lt;e, f, g, h&gt;                     </br>
+				A + B = &lt;a + e, b + f, c + g, d + h&gt; </br>
+			</code>
+
+			<p>Vector subtraction is practically identical (but you subtract instead of add).</p>
+
+			<code>
+				A = &lt;a, b, c, d&gt;                     </br>
+				B = &lt;e, f, g, h&gt;                     </br>
+				A - B = &lt;a - e, b - f, c - g, d - h&gt; </br>
+			</code>
+
+			<p>Why is that helpful?</p>
+
+			<p>
+				Going back to the example with the cat and the dog, say we want to find the position of the cat
+				relative to the dog (the cat's position if the dog was the origin). In that case, because position
+				relative to origin is like adding that vector to origin, the cat's position relative to the dog
+				would be the dog's position plus some vector. Here is a drawing (d is the dog; c is the cat):
+			</p>
+
+			<code><pre>
+d                d
+|                |  \    <---- [We want this vector]
+|                |     \
+|      c   ==>   |      c
+|    /           |    /
+|  /             |  /
+0                0
+			</pre></code>
+
+			<p>Now let's do some math.</p>
+
+			<p>The dog's position can be expressed as <code>0 + d</code> (where 0 is the origin).</p>
+			<p>Likewise, the cat's position can be expressed as <code>0 + c</code>.</p>
+			<p>So, if we want to express the cat's position relative to the dog, it would be <code>d + v</code> (where v is just some vector).</p>
+			<p>Because we want the position of the cat to stay the same relative to origin, it becomes <code>d + v = c</code>.</p>
+			<p>Now, we can use some algebra to find that the relative position (v) is <code>v = c - d</code>.</p>
+			<p>Using the numbers above, <code>v = &lt;1 - 5, 2 - 0, 3 - (-6), 3 - 2&gt; = &lt;-4, 2, 9, 1&gt;</code></p>
+
+			<p>The cat is 4 feet to the left of, 2 feet above, 9 feet away, and 1 foot along our friend's ruler relative to the dog.</p>
+
+			<h2 id="vector-scaling">Scaling Vectors</h2>
+
+			<p>Vector scaling is somewhat self-explanitory.</p>
+
+			<p>Say you had a picture of your favorite pet (cat or dog, I won't ask which one).</p>
+
+			<p>You put it into an image editor.</p>
+
+			<p>You scale it by 2x.</p>
+
+			<p>It is now twice the size.</p>
+
+			<p>That's vector scaling.</p>
+
+			<code>
+				A = &lt;x, y, z, w&gt;                  </br>
+				A * s = As = &lt;x*s, y*s, z*s, w*s&gt; </br>
+			</code>
+
+			<p>
+				Say you said to me: "Hey Trevor, I have a vector for the position of my dog, what if I wanted it
+				to be twice as far away?"
+			</p>
+
+			<p>I would say: "<code>d*2</code>"</p>
+
+			<p>If you said: "Hey Trevor, I have a vector for my cat and I want it to be half the distance."</p>
+
+			<p>I would say: "<code>d*0.5</code> or <code>d*(1/2)</code>"</p>
+
+			<h2 id="vector-dot-product">Dot Product</h2>
+
+			<p>
+				For the last two operations, I first tried to outline an intuitive understanding of the operation
+				before telling you the math.
+			</p>
+
+			<p>That doesn't really work here.</p>
+
+			<p>The math for dot product is pretty simple: Multiply each component together and add them all up:</p>
+
+			<code>
+				A = &lt;a, b, c, d&gt;                        </br>
+				B = &lt;e, f, g, h&gt;                        </br>
+				A * B = (a * e) + (b * f) + (c * g) + (d * h) </br>
+			</code>
+
+			<p>
+				It does have a different formula (foreshadowing), but we don't care about it right now (we'll deal
+				with it in shading).
+			</p>
+
+			<h2 id="vector-magnitude">Magnitude</h2>
+
+			<p>Magnitude is just a fancy name for length. If I ask you for the magnitude of a vector, I'm asking you for the length.</p>
+
+			<p>One fun part of vector notation: If I want the magnitude of <code>A</code>, I write <code>|A|</code> (aka the absolute value of v).</p>
+
+			<p>That makes sense, because absolute value is the distance from 0 (the origin) on the number line.</p>
+
+			<p>-42 is 42 numbers away from 0 (just like positive 42).</p>
+
+			<p>Question is: How do we find the magnitude of a vector? The answer: Pythagoras.</p>
+
+			<p>If you don't know about the Pythagorean theorem, some old (now dead) guy found that for the right triangle:</p>
+
+			<code><pre>
+  |\
+a |  \ c
+  |    \
+  |______\
+     b
+			</pre></code>
+
+			<p>The side lengths (a, b, c) are related: <code>a^2 + b^2 = c^2</code></p>
+
+			<p>
+				Now, I'm sure my man Pythagoras was fun to have at parties, but that's helpful because if
+				<code>A = &lt;x, y&gt;</code>:
+			</p>
+
+			<code><pre>
+       /|
+      / |
+|v|  /  | y
+    /   |
+   /    |
+  O------
+     x
+
+x^2 + y^2 = |A|^2   [and... taking the square root of both sides...]
+|A| = sqrt(x^2 + y^2)
+			</pre></code>
+
+			<p>
+				Now, extending to three dimensions is pretty simple; you project the vector on the xy plane
+				and find its magnitude. You then use that projected magnitude as the base of the triangle and
+				use the z component as the height. You then find the hypotenuse (<code>|A|</code>). I'm not
+				even going to attempt a drawing, because I know my limits. If you don't follow, just trust me.
+			</p>
+
+			<code>
+				A = &lt;a, b, c&gt;                                         </br>
+				|A| = sqrt(sqrt(a^2 + b^2)^2 + c^2) = sqrt(a^2 + b^2 + c^2) </br>
+			</code>
+
+			<p>Likewise, the same thing can be done in four dimensions. I'm definitely not drawing this.</p>
+
+			<code>
+				A = &lt;a, b, c, d&gt;                                                          </br>
+				|A| = sqrt(sqrt(sqrt(a^2 + b^2)^2 + c^2)^2 + d^2) = sqrt(a^2 + b^2 + c^2 + d^2) </br>
+			</code>
+
+			<p>
+				Let's jump back to the above example of our cat and dog laying in the room. If we didn't
+				have our strange four dimensional friend to read the ruler, we would think the cat's and
+				dog's positions would be:
+			</p>
+
+			<code>
+				c = &lt;1, 2, 3&gt;  </br>
+				d = &lt;5, 0, -6&gt; </br>
+			</code>
+
+			<p>Using our relative vector calculations and the magnitude of that relative vector:</p>
+
+			<code>
+				v = c - d                                                                     </br>
+				|v| = |c - d| = |&lt;-4, 2, 9&gt;| = sqrt((-4)^2 + 2^2 + 9^2) = 10.0498756211 </br>
+			</code>
+
+			<p>We can also perform this calculation knowing their four dimensional positions:</p>
+
+			<code>
+				v = c - d                                                                              </br>
+				|v| = |c - d| = |&lt;-4, 2, 9, 1&gt;| = sqrt((-4)^2 + 2^2 + 9^2 + 1^2) = 10.0995049384 </br>
+			</code>
+
+			<p>
+				We find that the cat and dog are <i>slightly</i> further apart than they would be if
+				they weren't in our four dimensional sci-fi living room. Ignoring the implications of
+				living in a house slightly out of skew with the rest of reality, we at least know that
+				our cat chose to be a bit over half an inch further away from our dog than we originally
+				thought them to be.
+			</p>
+
+			<p>
+				Now, <em>before you finish this section</em>, I want to bring something to your attention. I'm
+				going to do some weird math, and I want you to follow it (it's really important for the next post).
+			</p>
+
+			<code>
+			|A|                                                    </br>
+			= sqrt(a^2 + b^2 + c^2 + d^2)                          </br>
+			= sqrt(a*a + b*b + c*c + d*d) [now squint really hard] </br>
+			= sqrt(A * A)                                          </br>
+			</code>
+
+			<p>
+				Because a vector dotted with itself is the same as squaring its components and adding them together
+				(you're just multiplying each one with itself), we can construct an additional definition of vector
+				magnitude which will be helpful for deriving ray-intersection with a hypersphere (I'm getting ahead
+				of myself).
+			</p>
+
+			<p>
+				<strong>Side Note:</strong> You can also make a vector's length 1 by dividing by its magnitude
+				(or scaling by its reciprocal).
+			</p>
+
+			<h2>End Notes</h2>
+
+			<p>
+				Sorry for the long (slightly boring) post. I'm well aware that no-one wants to read an intro to
+				linear algebra in the first weeks of summer, but you'll need the base to do anything more than look
+				at the pretty pictures in the next post. The next one will be more interesting. I promise.
+			</p>
+
+			<p>Until next time,</p>
+			<p>Cheers.</p>
+
+			<p>Trevor Martin</p>
+		</div>
+	</body>
+</html>
