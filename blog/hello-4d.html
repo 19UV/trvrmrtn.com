@@ -19,6 +19,7 @@
 			</h1>
 
 			<p>Posted: June 2nd, 2024</p>
+			<p><a href="#updates">Updated: June 3rd, 2024</a></p>
 
 			<p>A few years ago, I came across an indie game called <a href="https://miegakure.com/">Miegakure</a>.</p>
 
@@ -302,7 +303,7 @@ a |  \ c
      b
 			</pre></code>
 
-			<p>The side lengths (a, b, c) are related: <code>a^2 + b^2 = c^2</code></p>
+			<p>The side lengths (a, b, c) are related: <code>a<sup>2</sup> + b<sup>2</sup> = c<sup>2</sup></code></p>
 
 			<p>
 				Now, I'm sure my man Pythagoras was fun to have at parties, but that's helpful because if
@@ -318,8 +319,8 @@ a |  \ c
   O------
      x
 
-x^2 + y^2 = |A|^2   [and... taking the square root of both sides...]
-|A| = sqrt(x^2 + y^2)
+x<sup>2</sup> + y<sup>2</sup> = |A|<sup>2</sup>   [and... taking the square root of both sides...]
+|A| = sqrt(x<sup>2</sup> + y<sup>2</sup>)
 			</pre></code>
 
 			<p>
@@ -331,14 +332,17 @@ x^2 + y^2 = |A|^2   [and... taking the square root of both sides...]
 
 			<code>
 				A = &lt;a, b, c&gt;                                         </br>
-				|A| = sqrt(sqrt(a^2 + b^2)^2 + c^2) = sqrt(a^2 + b^2 + c^2) </br>
+				|A| = sqrt(sqrt(a<sup>2</sup> + b<sup>2</sup>)<sup>2</sup> + c<sup>2</sup>)
+					= sqrt(a<sup>2</sup> + b<sup>2</sup> + c<sup>2</sup>) </br>
 			</code>
 
 			<p>Likewise, the same thing can be done in four dimensions. I'm definitely not drawing this.</p>
 
 			<code>
 				A = &lt;a, b, c, d&gt;                                                          </br>
-				|A| = sqrt(sqrt(sqrt(a^2 + b^2)^2 + c^2)^2 + d^2) = sqrt(a^2 + b^2 + c^2 + d^2) </br>
+				|A|
+					= sqrt(sqrt(sqrt(a<sup>2</sup> + b<sup>2</sup>)<sup>2</sup> + c<sup>2</sup>)<sup>2</sup> + d<sup>2</sup>)
+					= sqrt(a<sup>2</sup> + b<sup>2</sup> + c<sup>2</sup> + d<sup>2</sup>) </br>
 			</code>
 
 			<p>
@@ -356,14 +360,16 @@ x^2 + y^2 = |A|^2   [and... taking the square root of both sides...]
 
 			<code>
 				v = c - d                                                                     </br>
-				|v| = |c - d| = |&lt;-4, 2, 9&gt;| = sqrt((-4)^2 + 2^2 + 9^2) = 10.0498756211 </br>
+				|v| = |c - d| = |&lt;-4, 2, 9&gt;|
+					= sqrt((-4)<sup>2</sup> + 2<sup>2</sup> + 9<sup>2</sup>) = 10.0498756211 </br>
 			</code>
 
 			<p>We can also perform this calculation knowing their four dimensional positions:</p>
 
 			<code>
 				v = c - d                                                                              </br>
-				|v| = |c - d| = |&lt;-4, 2, 9, 1&gt;| = sqrt((-4)^2 + 2^2 + 9^2 + 1^2) = 10.0995049384 </br>
+				|v| = |c - d| = |&lt;-4, 2, 9, 1&gt;|
+					= sqrt((-4)<sup>2</sup> + 2<sup>2</sup> + 9<sup>2</sup> + 1<sup>2</sup>) = 10.0995049384 </br>
 			</code>
 
 			<p>
@@ -380,10 +386,10 @@ x^2 + y^2 = |A|^2   [and... taking the square root of both sides...]
 			</p>
 
 			<code>
-			|A|                                                    </br>
-			= sqrt(a^2 + b^2 + c^2 + d^2)                          </br>
-			= sqrt(a*a + b*b + c*c + d*d) [now squint really hard] </br>
-			= sqrt(A * A)                                          </br>
+			|A|                                                                   </br>
+			= sqrt(a<sup>2</sup> + b<sup>2</sup> + c<sup>2</sup> + d<sup>2</sup>) </br>
+			= sqrt(a*a + b*b + c*c + d*d) [now squint really hard]                </br>
+			= sqrt(A * A)                                                         </br>
 			</code>
 
 			<p>
@@ -410,6 +416,11 @@ x^2 + y^2 = |A|^2   [and... taking the square root of both sides...]
 			<p>Cheers.</p>
 
 			<p>Trevor Martin</p>
+
+			<h2 id="updates">Updates</h2>
+			<ul>
+				<li>June 3rd, 2024: Replaced use of <code>^2</code> with superscripts.</li>
+			</ul>
 		</div>
 	</body>
 </html>
