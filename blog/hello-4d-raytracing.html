@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content="My little corner of the internet.">
+
+		<title>Trevor Martin - Hello-4D-Raytracing</title>
+
+		<!-- Make the browser not request a favicon (for now) -->
+		<link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
+		<link href="../css/common.css" rel="stylesheet" />
+	</head>
+	<body>
+		<div class="wrapper">
+			<h1 class="header">
+				# <a href="..">trvrmrtn</a> <span>Blog/Hello-4D-Raytracing</span>
+			</h1>
+
+			<p>Posted: June 24th, 2024</p>
+
+			<p><em>
+				If you don't already have a strong understanding of vectors (or want a refresher),
+				see <a href="hello-4d.html">the previous post</a>. I highly recommend it.
+			</em></p>
+
+			<p>
+				In the last post, we went over how we can expand geometry into four spacial dimensions.
+				In this post, we're actually going to use it to draw some (hopefully) interesting things.
+				But first, we're going to need a brief intro to raytracing.
+			</p>
+
+			<h2>Introduction to raytracing</h2>
+
+			<p>
+				In the real world, light is emitted from sources like a desk lamp, your phone, or the sun.
+				It then travels in rays until it hits something. When it collides with an object, some
+				wavelengths get absorbed and some get reflected. Light keeps doing this until it is completely
+				absorbed, gets scattered senselessly, or is captured by a camera or human eye. While this process
+				seems simple (especially as I write it out), it is extremely complex and gives rise to several
+				interesting phenomina that we will attempt to replicate later.
+			</p>
+
+			<p>So let's get started.</p>
+
+			<h2>The ray function</h2>
+
+			<!-- TODO: I think this can be written better. -->
+			<p>
+				If you remember from geometry, a ray originates at a point and goes off infinitely in one
+				direction. We want to define a function to map a distance along the ray with a point on the ray.
+				Let's define two variables: <code>O</code> and <code>D</code>. <code>O</code> is the ray's origin
+				(or starting point). <code>D</code> is a vector in the ray's direction (we'll say for now that
+				<code>|D| = 1</code>). Going back the the examples in the previous post, <code>O</code> can be
+				thought of as the position of the cat and <code>D</code> is a vector of the relative position of
+				the dog but of length 1. <code>D</code> isn't the relative position of the dog, but it points in
+				the same direction. If we add <code>O</code> and <code>D</code>, we will get a vector 1 unit
+				along the ray toward the dog.
+			</p>
+
+			<p>
+				Now, say that we know that the dog is 1.7 units away from the cat in the direction described by
+				<code>D</code>. We can get the position of the dog relative to the cat by multiplying the
+				vector <code>D</code> by 1.7 (because we know that the length of D is 1; <code>|D| = 1</code>).
+				This would mathematically be expressed by <code>1.7D</code> (I'm avoiding using <code>*</code>
+				because it looks like dot product). We can then get the actual position of the dog (relative to
+				origin) by adding <code>O</code> and out new direction vector: <code>O + 1.7D</code>.
+			</p>
+
+			<p>But what if we don't know the dog's length along the ray? We define a function.</p>
+
+			<code>
+				R(t) = O + Dt, where t &GreaterEqual; 0
+			</code>
+
+			<p>
+				This function may look a little scary, but we're expressing the exact same thing as above.
+				We have a relative direction (<code>D</code>) that we're scaling by an amount (<code>t</code>)
+				and adding to <code>O</code> to find the actual position. Going back to the example, we can
+				calculate the position of the dog by evaluating <code>R(1.7)</code>.
+			</p>
+
+			<code>dog position = R(1.7) = O + 1.7D = what we did above</code>
+
+			<p>
+				This is a rather contrived example of the use of a ray as we'll be primary be modeling light
+				with it (as opposed to pets). The logic still stands, however, a ray of light has an origin
+				source and an initial direction which it will follow until it hits something.
+			</p>
+
+			<p>Now, to find when (or if) the ray hits something. To do so, we just need to solve for <code>t</code>!</p>
+
+			<h2>Introducing the hypersphere</h2>
+
+			<p>
+				How would you explain a sphere to a square on a piece of paper? For one, you shouldn't; you should
+				be on medication. But if you wanted to, one may go through a plethora of definitions like a
+				circle rotated about the x axis or an object whose slices are circles of varying radius. We would
+				likely, however, be met with unwavering confusion as we try to explain something utterly outside
+				the square's experience. Instead, we'll go with the definition of all three dimensional points of
+				distance <code>r</code> from its center <code>C</code>.
+			</p>
+
+			<p><em>Note:</em> This definition can also apply to defining circles.</p>
+
+			<p>
+				True, our definition does little to help our square friend visualize a sphere, but we'll assume
+				that truly envisioning it is impossible for our dear friend. Instead, by providing a mathematical
+				definition, our square can still reason about it. Now, our four dimensional friend (who setup the
+				fourth ruler in the last post) is going to attempt something similar for us.
+			</p>
+
+			<p>
+				Our friend begins by telling us about this new shape called a hypersphere (creative, I know).
+				The hypersphere is to a sphere what a sphere is to a circle, and like a sphere (or circle)
+				can be defined by the points a set distance from its center. Whether a point makes us a hypersphere
+				can be checked with the inequality:
+			</p>
+
+			<code>|P - C| = r</code>
+
+			<p>
+				<strong>Important:</strong> Take a second to read over this formula. Understand exactly what it
+				is discribing will make your life easier, and you have the tools to do so. If necessary, look
+				back at the previous blog post to review vector algebra.
+			</p>
+
+			<p>
+				Using this formula, we can check if a point <code>P</code> is on our hypersphere. We can also
+				check if a point of distance <code>t</code> along the ray <code>R(t)</code> is on the hypersphere:
+			</p>
+
+			<code>|R(t) - C| = r</code>
+
+			<p>
+				Now, an attentive reader may notice that the above equation has one unknown: <code>t</code>.
+				All other variables (<code>C</code> and <code>r</code>) are defined by the object.
+				Therefore, if we can solve for <code>t</code> it means that the ray hits the hypersphere!
+				Time for some algebra.
+			</p>
+
+			<p>First we substitute <code>R(t)</code> for <code>O + Dt</code> and move the variables around a bit:</p>
+
+			<code>
+				|R(t) - C| = r   </br>
+				|O + Dt - C| = r </br>
+				|Dt + O - C| = r </br>
+			</code>
+
+			<p>Now, we'll use our definition of magnitude (<code>|A| = sqrt(A * A)</code>) from the previous post:</p>
+
+			<code>
+				|Dt + O - C| = r                            </br>
+				sqrt((Dt + O - C) * (Dt + O - C)) = r       </br>
+				(Dt + O - C) * (Dt + O - C) = r<sup>2</sup> </br>
+			</code>
+
+			<p>
+				At this point, I'm going to be a little hand-wavey. Like scalar addition and multiplication, vector
+				addition and dot product are also distributive. I could prove the following step, but I don't want
+				to; it could be an interesting exercise for the reader. I'll just group the equation
+				and distribute it:
+			</p>
+
+			<code>
+				(Dt + O - C) * (Dt + O - C) = r<sup>2</sup>                                       </br>
+				(Dt + (O - C)) * (Dt + (O - C)) = r<sup>2</sup>                                   </br>
+				(Dt * Dt) + (Dt * (O - C)) + (Dt * (O - C)) + ((O - C) * (O - C)) = r<sup>2</sup> </br>
+				(Dt * Dt) + 2(Dt * (O - C)) + ((O - C) * (O - C)) = r<sup>2</sup>                 </br>
+			</code>
+
+			<p>
+				Vector scaling can be moved outside the dot product (because the variable will be in each of the
+				components summed up, and we can use the distributive property). So, <code>As * B = (A * B)s</code>.
+				Once again, if you feel so inclined, prove it. Based on that property, we can move the <code>t</code>s
+				outside their dot products:
+			</p>
+
+			<code>
+				(Dt * Dt) + 2(Dt * (O - C)) + ((O - C) * (O - C)) = r<sup>2</sup>            </br>
+				(D * D)t<sup>2</sup> + 2(D * (O - C))t + (O - C) * (O - C) = r<sup>2</sup> </br>
+			</code>
+
+			<p>We'll just move <code>r<sup>2</sup></code> to the other side of the equation:</p>
+
+			<code>
+				(D * D)t<sup>2</sup> + 2(D * (O - C))t + (O - C) * (O - C) = r<sup>2</sup>     </br>
+				(D * D)t<sup>2</sup> + 2(D * (O - C))t + (O - C) * (O - C) - r<sup>2</sup> = 0 </br>
+			</code>
+
+			<p>Now, squint really hard at the equation. It should look like something. I'll give you a hint:</p>
+
+			<code>
+				a = D * D                 </br>
+				b = 2(D * (O - C))        </br>
+				c = (O - C) * (O - C) - r </br>
+				x = t                     </br>
+			</code>
+
+			<p>Gives us:</p>
+
+			<code>ax<sup>2</sup> + bx + c = 0</code>
+
+			<p>
+				Now, let's go back and remember what we're actually doing this for.
+				We are trying to find the value <code>t</code> such that the resulting point from <code>R(t)</code>
+				is on our hypersphere. Now, how do you solve a quadratic equation? The quadratic formula.
+			</p>
+
+			<code>x = (-b &plusmn; sqrt(b<sup>2</sup> - 4ac)) / 2a [Sorry, I can't do fractions easily]</code>
+
+			<p>
+				Now, I won't write out the full equation. An implementation should probably just evaluate
+				<code>a</code>, <code>b</code>, and <code>c</code> and store them in variables. But, when
+				evaluating the quadratic formula, there are two things you need to keep in mind: the denominator
+				not being zero and the number of solutions.
+			</p>
+
+			<p>
+				First, the denominator will never be 0. That would mean that our <code>D</code> vector would
+				be a zero vector, which we will just pinky promise to never do. This is because each component
+				is squared with itself, so they're all positive. For the sum to be zero, all squares must be zero.
+				Secondly, the expression <code>b<sup>2</sup> - 4ac</code> can be three things: positive, zero, or negative.
+			</p>
+
+			<p>
+				If <code>b<sup>2</sup> - 4ac</code> (aka. the discriminant) is positive, that
+				means we have two solutions (the square root will be added to and subtracted from <code>-b</code>
+				and divided. A positive discriminant means that the ray hits the hypersphere at two points. Great!
+			</p>
+
+			<p>
+				If the discriminant is zero, that means we only have one solution (because a number plus or minus
+				zero will just be that number). If the discriminant is zero, our result will be <code>-b</code>
+				divided by <code>2a</code>, and that will be the end of it. Still good; we at least hit it.
+			</p>
+
+			<p>
+				If the discriminant is negative, that means we have two imaginary solutions on our hands. For
+				practical purposes, that means we have no solutions. In this case, the ray goes off into
+				infinity, never being seen again. <em>Further Research:</em> I would love to know if there are
+				actual meanings behind the complex numbers from a miss.
+			</p>
+
+			<p>In summary:</p>
+
+			<code><pre>
+    Two Hits (Positive)  |       One Hit (Zero)    |    No Hits (Negative)
+                         |                         |
+                         |            /            |  ^
+          _____          |          X____          |  |       _____
+         /     \         |        //     \         |  |      /     \
+        /       \        |      / /       \        |  |     /       \
+       |         |       |    /  |         |       |  |    |         |
+  O----X---------X-->    |  O    |         |       |  O    |         |
+       |         |       |       |         |       |       |         |
+        \       /        |        \       /        |        \       /
+         \_____/         |         \_____/         |         \_____/
+			</pre></code>
+
+			<p>
+				<strong>Important:</strong> For a hypersphere, use the minus solution to the equation (that's
+				the closest hit). <em>Also, make sure you always check to that your t value is positive,
+				or you're linetracing--not raytracing.</em>
+			</p>
+
+			<p>
+				So, if we define a hypersphere located at <code>C = &lt;0, 0, 0, 0&gt;</code> with radius <code>r = 1</code>,
+				and have rays originate at <code>O = &lt;0, 0, -3, 0&gt;</code> in the direction of <code>D = &lt;x, y, 1, 0&gt;</code>
+				where <code>x</code> and <code>y</code> vary from -1 to 1 and render it, we get:
+			</p>
+
+			<a href="/img/hello-4d-raytracing/initial-hypersphere.png" target="_blank">
+				<img
+					src="/img/hello-4d-raytracing/initial-hypersphere.png"
+					alt="Initial Hypersphere Render"
+					style="width:256px;height:256px;padding-left:20px"
+				></img>
+			</a>
+
+			<p>Riveting...</p>
+
+			<p>
+				Because this image is kind of boring, I'll spice it up by having the color correspond
+				to the direction the surface is facing at that point (the sphere's normal at that point).
+				Don't worry if you don't understand any of what I just said. I'll go over that in the next
+				post on shading.
+			</p>
+
+			<a href="/img/hello-4d-raytracing/normal-hypersphere.png" target="_blank">
+				<img
+					src="/img/hello-4d-raytracing/normal-hypersphere.png"
+					alt="Normal Shaded Hypersphere Render"
+					style="width:256px;height:256px;padding-left:20px"
+				></img>
+			</a>
+
+
+			<p>
+				At first this appears disappointing, but it's exactly what we expect. Going back to our square
+				friend, he would see something almost identical if we introduced a sphere. Say we placed him on
+				a table looking over the ledge. The square's field of view will be exclusively limited to the flat
+				surface of the table, but he will be able to see straight out over the edge. If we hold a red sphere
+				just off the ledge, the square will only be able to see part of the sphere: the part contained by
+				the plane that makes up the table surface. To the square, our sphere will only look like a circle
+				that will shrink and grow as we move the sphere up and down. The same is true as our four dimensional
+				friend moved a hypersphere up and down; our three dimensional eyes will only be able to percieve a
+				sphere growing and shrinking in size. It's kinda lame, but what happens if we show the square a mirror
+				facing outside of their planar view? That's next post.
+			</p>
+
+			<p>Before you head out, however, I feel like we need a 'floor' to put our hypersphere on.</p>
+
+			<h2>Introducing the hyperplane</h2>
+
+			<p>As you can tell, mathematicians' creativity knows no bounds.</p>
+
+			<p>
+				Ok, first: what is a hyperplane? I'm going to skip over our arguments with our square and four
+				dimensional friends, and go right out of the gate with this definition: all points <code>P</code>
+				which are (relative to the plane center <code>C</code>) perpendicular to the normal vector
+				<code>N</code>.
+			</p>
+
+			<p>What does that mean? Well, we may need our square friend after all...</p>
+
+			<p>
+				These are some lines (our square's closest thing to planes). Labeled in the drawing is the
+				point <code>C</code> and our normal vector <code>N</code>. For now, you just need to know that a
+				normal vector is perpendicular to the line.
+			</p>
+
+			<code><pre>
+                        \        N           \
+       N                 \     /              \
+       ^                  \  /                 \
+       |                   C                    C
+       |                    \                 /  \
+-------C-------              \              /     \
+                              \            N       \
+			</pre></code>
+
+			<p>
+				You can see that (at least in the first example), every point along the unmarked section (the actual line)
+				is perpendicular to the vector <code>N</code>. This is the same in three dimensions; if you put a piece
+				of paper on a table and place a pencil facing straight up, all points on the paper are at 90&deg; angles
+				to the pencil. The same is true in four dimensions.
+			</p>
+
+			<p>So how do we define a hyperplane?</p>
+
+			<p>You know when I said in the last post that there was "a different formula" that "we'll deal with it in shading"?</p>
+
+			<p>Turns out I lied. Sorry.</p>
+
+			<p>The other formula for a dot product is:</p>
+
+			<code>A * B = |A||B|cos(theta) [Where theta is the angle between the vectors A and B]</code>
+
+			<p><em>Note:</em> Now you can find another reason why <code>A * A = |A|<sup>2</sup></code>.</p>
+
+			<p>
+				Because all points must be at a right angle to the normal vector relative to the center, that means
+				that <code>theta = 90&deg;</code> and <code>cos(theta) = 0</code>. And because the position of
+				<code>P</code> relative to the center <code>C</code> is <code>P - C</code>, the final equation is
+				<code>(P - C) * N = |P - C||N|cos(90&deg;) = |P - C||N|(0) = 0</code>
+			</p>
+
+			<p>To reiterate, our hyperplane equation is:</p>
+
+			<code>(P - C) * N = 0</code>
+
+			<p>Now, like above, we can substitute in <code>R(t)</code> and solve. I'll be a bit quicker this time.</p>
+
+			<code><pre>
+(P - C) * N = 0                [Given]
+(R(t) - C) * N = 0             [Substitute P for R(t)]
+(O + Dt - C) * N = 0           [Expand R(t)]
+(Dt + O - C) * N = 0           [Shuffle around some stuff]
+(Dt + (O - C)) * N = 0         [Group O - C together (just for looks)]
+(Dt * N) + ((O - C) * N) = 0   [Distribute N]
+(D * N)t + ((O - C) * N) = 0   [Move t out of the dot product]
+(D * N)t = -((O - C) * N)      [Move (O - C) * N to the right side]
+t = -((O - C) * N) / (D * N)   [Move t all the way to the left side, solving for t]
+			</pre></code>
+
+			<p>
+				That's it. You do need to check if <code>D * N</code> is 0 (the ray is parallel to the hyperplane)
+				and make sure <code>t</code> is positive, but other than that, you just created a hyperplane!
+			</p>
+
+			<p>Here is a normal-shaded hypersphere (from above) on a hyperplane (<code>C = &lt;0, -1, 0, 0&gt;, N = &lt;0, 1, 0, 0&gt;</code>):</p>
+
+			<a href="/img/hello-4d-raytracing/normal-hypersphere-hyperplane.png" target="_blank">
+				<img
+					src="/img/hello-4d-raytracing/normal-hypersphere-hyperplane.png"
+					alt="Normal Shaded Hypersphere Render"
+					style="width:256px;height:256px;padding-left:20px"
+				></img>
+			</a>
+
+			<p><em>
+				If you're bored, please feel free to mess around with the parameters. What happens if you change the <code>w</code>
+				value of the hyperplane's normal? What happens when you move the hypersphere through <code>w</code>? Does a ray's
+				direction (D) need to have a magnitude of 1? What about the hyperplane normal? Can you make an approximation of
+				the <a href="https://en.wikipedia.org/wiki/Cornell_box" target="_blank">Cornell box</a>? Play around with this; have fun.
+			</em></p>
+
+			<p>In the next post, we'll probably do shading so the real fun stuff can begin.</p>
+
+			<p>Til next time,</p>
+			<p>Cheers.</p>
+
+			<p>Trevor Martin</p>
+		</div>
+	</body>
+</html>
